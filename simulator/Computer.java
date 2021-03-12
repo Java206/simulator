@@ -66,6 +66,22 @@ public class Computer {
 		// TODO - Set CC (remove this after implementing)
 	}
 
+	public void executeAdd() {
+		System.out.println();
+	}
+
+	public void excuteAnd() {
+		System.out.println();
+	}
+
+	public void excuteLD() {
+		System.out.println();
+	}
+
+	public void excuteBR() {
+		System.out.println();
+	}
+	
 	/**
 	 * This method will execute all the instructions starting at address 0 
 	 * till HALT instruction is encountered. 
