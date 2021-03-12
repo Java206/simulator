@@ -1,7 +1,9 @@
 package simulator;
+
 /**
- * Computer class comprises of memory, registers, cc and
- * can execute the instructions based on PC and IR 
+ * Computer class comprises of memory, registers, cc and can execute the
+ * instructions based on PC and IR
+ * 
  * @author mmuppa
  *
  */
@@ -17,9 +19,8 @@ public class Computer {
 	private BitString mCC;
 
 	/**
-	 * Initializes all the memory to 0, registers to 0 to 7
-	 * PC, IR to 16 bit 0s and CC to 000 
-	 * Represents the initial state 
+	 * Initializes all the memory to 0, registers to 0 to 7 PC, IR to 16 bit 0s and
+	 * CC to 000 Represents the initial state
 	 */
 	public Computer() {
 		mPC = new BitString();
@@ -42,9 +43,10 @@ public class Computer {
 	}
 
 	/**
-	 * Loads a 16 bit word into memory at the given address. 
+	 * Loads a 16 bit word into memory at the given address.
+	 * 
 	 * @param address memory address
-	 * @param word data or instruction or address to be loaded into memory
+	 * @param word    data or instruction or address to be loaded into memory
 	 */
 	public void loadWord(int address, BitString word) {
 		if (address < 0 || address >= MAX_MEMORY) {
@@ -54,7 +56,7 @@ public class Computer {
 	}
 
 	/**
-	 * Performs not operation by using the data from the register based on bits[7:9] 
+	 * Performs not operation by using the data from the register based on bits[7:9]
 	 * and inverting and storing in the register based on bits[4:6]
 	 */
 	public void executeNot() {
@@ -62,12 +64,27 @@ public class Computer {
 		BitString sourceBS = mIR.substring(7, 3);
 		mRegisters[destBS.getValue()] = mRegisters[sourceBS.getValue()].copy();
 		mRegisters[destBS.getValue()].invert();
-		
-		// TODO - Set CC (remove this after implementing)
+		setCC(mRegisters[destBS.getValue()].getValue2sComp());
+
 	}
 
 	public void executeAdd() {
-		System.out.println();
+		BitString check = mIR.substring(13, 1);
+		BitString destBS = mIR.substring(4, 3);
+		BitString sourceBS = mIR.substring(7, 3);
+		if (check.getValue() == 1) {
+			BitString binaryNumber = mIR.substring(14, 5);
+			BitString answer = new BitString();
+			answer.setValue2sComp(mRegisters[sourceBS.getValue()].getValue() + binaryNumber.getValue2sComp());
+			mRegisters[destBS.getValue()] = answer;
+		} else if (check.getValue() == 0) {
+			BitString sourceBS2 = mIR.substring(13, 3);
+			BitString answer = new BitString();
+			answer.setValue2sComp(
+					mRegisters[sourceBS.getValue()].getValue() + mRegisters[sourceBS2.getValue()].getValue());
+			mRegisters[destBS.getValue()] = answer;
+		}
+		setCC(mRegisters[destBS.getValue()].getValue2sComp());
 	}
 
 	public void excuteAnd() {
@@ -81,10 +98,20 @@ public class Computer {
 	public void excuteBR() {
 		System.out.println();
 	}
-	
+
+	public void setCC(int theValue) {
+		if (theValue < 0) {
+			mCC.setBits(new char[] { '1', '0', '0' });
+		} else if (theValue < 0) {
+			mCC.setBits(new char[] { '0', '1', '0' });
+		} else {
+			mCC.setBits(new char[] { '0', '0', '1' });
+		}
+	}
+
 	/**
-	 * This method will execute all the instructions starting at address 0 
-	 * till HALT instruction is encountered. 
+	 * This method will execute all the instructions starting at address 0 till HALT
+	 * instruction is encountered.
 	 */
 	public void execute() {
 		BitString opCodeStr;
@@ -95,7 +122,7 @@ public class Computer {
 			mIR = mMemory[mPC.getValue()];
 			mPC.addOne();
 
-			// Decode the instruction's first 4 bits 
+			// Decode the instruction's first 4 bits
 			// to figure out the opcode
 			opCodeStr = mIR.substring(0, 4);
 			opCode = opCodeStr.getValue();
@@ -103,6 +130,9 @@ public class Computer {
 			// What instruction is this?
 			if (opCode == 9) { // NOT
 				executeNot();
+				return; // TODO - Remove this once you add other instructions.
+			} else if (opCode == 1) { // NOT
+				executeAdd();
 				return; // TODO - Remove this once you add other instructions.
 			}
 			// TODO - Others
