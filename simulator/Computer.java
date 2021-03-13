@@ -69,11 +69,11 @@ public class Computer {
 	}
 
 	public void executeAdd() {
-		BitString check = mIR.substring(13, 1);
+		BitString check = mIR.substring(10, 1);
 		BitString destBS = mIR.substring(4, 3);
 		BitString sourceBS = mIR.substring(7, 3);
 		if (check.getValue() == 1) {
-			BitString binaryNumber = mIR.substring(14, 5);
+			BitString binaryNumber = mIR.substring(11, 5);
 			BitString answer = new BitString();
 			answer.setValue2sComp(mRegisters[sourceBS.getValue()].getValue() + binaryNumber.getValue2sComp());
 			mRegisters[destBS.getValue()] = answer;
@@ -87,12 +87,44 @@ public class Computer {
 		setCC(mRegisters[destBS.getValue()].getValue2sComp());
 	}
 
-	public void excuteAnd() {
-		System.out.println();
+	public void executeAnd() {
+		BitString check = mIR.substring(10, 1);
+		BitString destBS = mIR.substring(4, 3);
+		BitString sourceBS = mIR.substring(7, 3);
+		if (check.getValue() == 1) {
+			BitString binaryNumber = new BitString();
+			char extension = (char) mIR.substring(11, 1).getValue();
+			binaryNumber.setBits(new char[] { extension, extension, extension, extension, extension, extension,
+					extension, extension, extension, extension, extension });
+			binaryNumber.append(mIR.substring(11, 5));
+
+			BitString answer = new BitString();
+			char[] andChar = new char[] {};
+			for (int i = 0; i < 16; i++) {
+				andChar[i] = mRegisters[sourceBS.getValue()].getBits()[i] == '1' && binaryNumber.getBits()[i] == '1'
+						? '1'
+						: '0';
+			}
+			answer.setBits(andChar);
+			mRegisters[destBS.getValue()] = answer;
+		} else if (check.getValue() == 0) {
+			BitString sourceBS2 = mIR.substring(13, 3);
+			BitString answer = new BitString();
+			char[] andChar = new char[] {};
+			for (int i = 0; i < 16; i++) {
+				andChar[i] = mRegisters[sourceBS.getValue()].getBits()[i] == '1'
+						&& mRegisters[sourceBS2.getValue()].getBits()[i] == '1' ? '1' : '0';
+			}
+			answer.setBits(andChar);
+			mRegisters[destBS.getValue()] = answer;
+		}
+
+		setCC(mRegisters[destBS.getValue()].getValue2sComp());
 	}
 
-	public void excuteLD() {
-		System.out.println();
+	public void executeLD() {
+		BitString destBS = mIR.substring(4, 3);
+		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(11, 5).getValue2sComp()];
 	}
 
 	public void excuteBR() {
@@ -133,6 +165,12 @@ public class Computer {
 				return; // TODO - Remove this once you add other instructions.
 			} else if (opCode == 1) { // NOT
 				executeAdd();
+				return; // TODO - Remove this once you add other instructions.
+			} else if (opCode == 2) { // NOT
+				executeLD();
+				return; // TODO - Remove this once you add other instructions.
+			} else if (opCode == 5) { // NOT
+				executeAnd();
 				return; // TODO - Remove this once you add other instructions.
 			}
 			// TODO - Others
