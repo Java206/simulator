@@ -99,6 +99,25 @@ public class Computer {
 		System.out.println();
 	}
 
+/* 	if(PE == 1 && (CPL > IOPL || VM == 1)) { //Protected mode with CPL > IOPL or virtual-8086 mode
+		if(!IOPermission()) Exception(GP); //Any I/O Permission Bit for I/O port being accessed = 1
+		else Destination = Source; //Writes to selected I/O port
+	}
+	//Real Mode or Protected Mode with CPL <= IOPL
+	else Destination = Source; //Writes to selected I/O port */
+
+/* 	Copies the value from the second operand (source operand) to the I/O port 
+	specified with the destination operand (first operand).  */
+	public void executeOUT() {
+		BitString destBS = mIR.substring(4, 3);
+		BitString sourceBS = mIR.substring(7, 3);
+		BitString copyOfValue = (mRegisters[destBS.getValue()] = mRegisters[sourceBS.getValue()].copy());
+		System.out.println(copyOfValue);
+	}
+
+	public void excuteHalt() {
+		System.exit(1);
+	}
 	public void setCC(int theValue) {
 		if (theValue < 0) {
 			mCC.setBits(new char[] { '1', '0', '0' });
@@ -134,6 +153,9 @@ public class Computer {
 			} else if (opCode == 1) { // NOT
 				executeAdd();
 				return; // TODO - Remove this once you add other instructions.
+			} else if (opCode == -9) {
+				excuteHalt();
+				return;
 			}
 			// TODO - Others
 		}
