@@ -49,6 +49,11 @@ public class Simulator {
 		/* from the array shown above. */
 		System.out.println(comp.getMemory(6));
 
+		BitString notInstr = new BitString();
+		notInstr.setBits("0101101101100000".toCharArray());
+		comp.loadWord(0, notInstr);
+		comp.execute();
+
 		BitString addInstr = new BitString();
 		addInstr.setBits("0001110110100010".toCharArray());
 		comp.loadWord(0, addInstr);

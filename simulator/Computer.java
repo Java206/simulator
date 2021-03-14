@@ -95,11 +95,10 @@ public class Computer {
 			BitString binaryNumber = new BitString();
 			char extension = (char) mIR.substring(11, 1).getValue();
 			binaryNumber.setBits(new char[] { extension, extension, extension, extension, extension, extension,
-					extension, extension, extension, extension, extension });
-			binaryNumber.append(mIR.substring(11, 5));
-
+					extension, extension, extension, extension, extension});
+			binaryNumber = binaryNumber.append(mIR.substring(11, 5));
 			BitString answer = new BitString();
-			char[] andChar = new char[] {};
+			char[] andChar = new char[16];
 			for (int i = 0; i < 16; i++) {
 				andChar[i] = mRegisters[sourceBS.getValue()].getBits()[i] == '1' && binaryNumber.getBits()[i] == '1'
 						? '1'
@@ -110,7 +109,7 @@ public class Computer {
 		} else if (check.getValue() == 0) {
 			BitString sourceBS2 = mIR.substring(13, 3);
 			BitString answer = new BitString();
-			char[] andChar = new char[] {};
+			char[] andChar = new char[16];
 			for (int i = 0; i < 16; i++) {
 				andChar[i] = mRegisters[sourceBS.getValue()].getBits()[i] == '1'
 						&& mRegisters[sourceBS2.getValue()].getBits()[i] == '1' ? '1' : '0';
@@ -170,10 +169,10 @@ public class Computer {
 
 	public String getMemory(int theLocation) {
 		String value = "";
-		for (char c :mRegisters[theLocation].getBits()){
+		for (char c : mRegisters[theLocation].getBits()) {
 			value += c;
 		}
-		return value ;
+		return value;
 	}
 
 	/**
