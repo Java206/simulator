@@ -80,8 +80,8 @@ public class Computer {
 		} else if (check.getValue() == 0) {
 			BitString sourceBS2 = mIR.substring(13, 3);
 			BitString answer = new BitString();
-			answer.setValue2sComp(
-					mRegisters[sourceBS.getValue()].getValue() + mRegisters[sourceBS2.getValue()].getValue());
+			answer.setValue2sComp(mRegisters[sourceBS.getValue()].getValue2sComp()
+					+ mRegisters[sourceBS2.getValue()].getValue2sComp());
 			mRegisters[destBS.getValue()] = answer;
 		}
 		setCC(mRegisters[destBS.getValue()].getValue2sComp());
@@ -95,7 +95,7 @@ public class Computer {
 			BitString binaryNumber = new BitString();
 			char extension = (char) mIR.substring(11, 1).getValue();
 			binaryNumber.setBits(new char[] { extension, extension, extension, extension, extension, extension,
-					extension, extension, extension, extension, extension});
+					extension, extension, extension, extension, extension });
 			binaryNumber = binaryNumber.append(mIR.substring(11, 5));
 			BitString answer = new BitString();
 			char[] andChar = new char[16];
@@ -154,6 +154,7 @@ public class Computer {
 	}
 
 	public void executeHalt() {
+		System.out.println("Halting!");
 		System.exit(1);
 	}
 
@@ -184,8 +185,9 @@ public class Computer {
 		int opCode;
 		BitString trapStr;
 		int trapCode;
+		Boolean flag = true;
 
-		while (true) {
+		while (flag) {
 			// Fetch the instruction
 			mIR = mMemory[mPC.getValue()];
 			mPC.addOne();
@@ -194,7 +196,7 @@ public class Computer {
 			// to figure out the opcode
 			opCodeStr = mIR.substring(0, 4);
 			opCode = opCodeStr.getValue();
-			trapStr = mIR.substring(7, 8);
+			trapStr = mIR.substring(8, 8);
 			trapCode = trapStr.getValue();
 
 			// 1111 0000 0010 0101 ;HALT 1+4+32
@@ -204,25 +206,19 @@ public class Computer {
 			// What instruction is this?
 			if (opCode == 0) { // NOT
 				executeBR();
-				return;
 			} else if (opCode == 1) { // NOT
 				executeAdd();
-				return;
 			} else if (opCode == 2) { // NOT
 				executeLD();
-				return;
 			} else if (opCode == 5) { // NOT
 				executeAnd();
-				return;
 			} else if (opCode == 9) { // NOT
 				executeNot();
-				return;
 			} else if (opCode == 15 && trapCode == 37) {
 				executeHalt();
-				return;
+				flag = false;
 			} else if (opCode == 15 && trapCode == 32) {
 				executeOUT();
-				return;
 			}
 		}
 	}

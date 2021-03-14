@@ -27,7 +27,7 @@ public class Simulator {
 
 		String program[] = { "0010000000000111", "0010001000000111", "0001010000000001", "0000010000000011",
 				"1111000000100001", "0001000000111111", "0000111111111011", "1111000000100101", "0000000000111001",
-				"1111111111010000" };
+				"1111111111010000", "1111000000100101" };
 
 		/*
 		 * This is the assembly program that was compiled into the binary program shown
@@ -49,24 +49,30 @@ public class Simulator {
 		/* from the array shown above. */
 		System.out.println(comp.getMemory(6));
 
-		BitString notInstr = new BitString();
-		notInstr.setBits("0101101101100000".toCharArray());
-		comp.loadWord(0, notInstr);
-		comp.execute();
+		BitString andInstr = new BitString();
+		andInstr.setBits("0101101101100000".toCharArray());
+		comp.loadWord(0, andInstr);
 
 		BitString addInstr = new BitString();
 		addInstr.setBits("0001110110100010".toCharArray());
-		comp.loadWord(0, addInstr);
+		comp.loadWord(1, addInstr);
 
 		BitString notInstr = new BitString();
 		notInstr.setBits("1001100101111111".toCharArray());
-		comp.loadWord(1, notInstr);
+		comp.loadWord(2, notInstr);
+
+		BitString HaltInstr = new BitString();
+		HaltInstr.setBits("1111000000100101".toCharArray());
+		comp.loadWord(3, HaltInstr);
 
 		/* TODO - load the instructions in the "program" array */
 		/*
-		 * for (int i=0; i<program.length; i++) { BitString instr = new BitString();
-		 * instr.setBits(program[i].toCharArray()); comp.loadWord(i, instr); }
 		 */
+		// for (int i = 0; i < program.length; i++) {
+		// BitString instr = new BitString();
+		// instr.setBits(program[i].toCharArray());
+		// comp.loadWord(i, instr);
+		// }
 
 		/* execute the program */
 		/* During execution, the only output to the screen should be */
