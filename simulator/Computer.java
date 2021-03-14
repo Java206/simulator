@@ -200,26 +200,22 @@ public class Computer {
 			trapStr = mIR.substring(8, 8);
 			trapCode = trapStr.getValue();
 
-			// 1111 0000 0010 0101 ;HALT 1+4+32
-			// 1111 0000 0010 0001 ;OUT
-			// 1+2+4+8 = 15
-
 			// What instruction is this?
-			if (opCode == 0 && mIR.substring(4, 3).getValue() != 0) { // NOT
+			if (opCode == 0 && mIR.substring(4, 3).getValue() != 0) { // BR
 				executeBR();
-			} else if (opCode == 1) { // NOT
+			} else if (opCode == 1) { // Add
 				executeAdd();
-			} else if (opCode == 2) { // NOT
+			} else if (opCode == 2) { // LD
 				executeLD();
-			} else if (opCode == 5) { // NOT
+			} else if (opCode == 5) { // And
 				executeAnd();
 			} else if (opCode == 9) { // NOT
 				executeNot();
-			} else if (opCode == 15 && trapCode == 37) {
+			} else if (opCode == 15 && trapCode == 37) { // Halt
 				executeHalt();
 				flag = false;
 				return;
-			} else if (opCode == 15 && trapCode == 33) {
+			} else if (opCode == 15 && trapCode == 33) { // OUT
 				executeOUT();
 			}
 		}
