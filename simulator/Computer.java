@@ -123,7 +123,7 @@ public class Computer {
 
 	public void executeLD() {
 		BitString destBS = mIR.substring(4, 3);
-		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(7, 9).getValue2sComp() - 1];
+		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(7, 9).getValue2sComp()];
 	}
 
 	public void executeBR() {
@@ -138,27 +138,13 @@ public class Computer {
 		if ((brN.getValue() == currentN.getValue() && brN.getValue() == 1)
 				|| (brZ.getValue() == currentZ.getValue() && brZ.getValue() == 1)
 				|| (brP.getValue() == currentP.getValue() && brP.getValue() == 1)) {
-			mPC.setValue(mPC.getValue() + offSet.getValue2sComp());
+			mPC.setValue(mPC.getValue() + offSet.getValue2sComp() - 1);
 		}
 	}
 
-	/*
-	 * if(PE == 1 && (CPL > IOPL || VM == 1)) { //Protected mode with CPL > IOPL or
-	 * virtual-8086 mode if(!IOPermission()) Exception(GP); //Any I/O Permission Bit
-	 * for I/O port being accessed = 1 else Destination = Source; //Writes to
-	 * selected I/O port } //Real Mode or Protected Mode with CPL <= IOPL else
-	 * Destination = Source; //Writes to selected I/O port
-	 */
-
-	/*
-	 * Copies the value from the second operand (source operand) to the I/O port
-	 * specified with the destination operand (first operand).
-	 */
 	public void executeOUT() {
 		BitString destBS = mIR.substring(4, 3);
-		BitString sourceBS = mIR.substring(7, 3);
-		BitString copyOfValue = (mRegisters[destBS.getValue()] = mRegisters[sourceBS.getValue()].copy());
-		System.out.println(copyOfValue);
+		System.out.print((char) mRegisters[destBS.getValue()].substring(8, 8).getValue());
 	}
 
 	public void executeHalt() {
@@ -225,7 +211,7 @@ public class Computer {
 				executeHalt();
 				flag = false;
 				return;
-			} else if (opCode == 15 && trapCode == 32) {
+			} else if (opCode == 15 && trapCode == 33) {
 				executeOUT();
 			}
 		}
