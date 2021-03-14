@@ -127,19 +127,26 @@ public class Computer {
 		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(11, 5).getValue2sComp()];
 	}
 
-	public void excuteBR() {
-		System.out.println();
+	public void executeBR() {
+		BitString destNZP = mIR.substring(4, 3);
+		BitString offSet = mIR.substring(7, 9);
+		if (mCC.getValue() == destNZP.getValue()) {
+			mPC.setValue(mPC.getValue() + offSet.getValue2sComp());
+		}
 	}
 
-/* 	if(PE == 1 && (CPL > IOPL || VM == 1)) { //Protected mode with CPL > IOPL or virtual-8086 mode
-		if(!IOPermission()) Exception(GP); //Any I/O Permission Bit for I/O port being accessed = 1
-		else Destination = Source; //Writes to selected I/O port
-	}
-	//Real Mode or Protected Mode with CPL <= IOPL
-	else Destination = Source; //Writes to selected I/O port */
+	/*
+	 * if(PE == 1 && (CPL > IOPL || VM == 1)) { //Protected mode with CPL > IOPL or
+	 * virtual-8086 mode if(!IOPermission()) Exception(GP); //Any I/O Permission Bit
+	 * for I/O port being accessed = 1 else Destination = Source; //Writes to
+	 * selected I/O port } //Real Mode or Protected Mode with CPL <= IOPL else
+	 * Destination = Source; //Writes to selected I/O port
+	 */
 
-/* 	Copies the value from the second operand (source operand) to the I/O port 
-	specified with the destination operand (first operand).  */
+	/*
+	 * Copies the value from the second operand (source operand) to the I/O port
+	 * specified with the destination operand (first operand).
+	 */
 	public void executeOUT() {
 		BitString destBS = mIR.substring(4, 3);
 		BitString sourceBS = mIR.substring(7, 3);
@@ -147,9 +154,10 @@ public class Computer {
 		System.out.println(copyOfValue);
 	}
 
-	public void excuteHalt() {
+	public void executeHalt() {
 		System.exit(1);
 	}
+
 	public void setCC(int theValue) {
 		if (theValue < 0) {
 			mCC.setBits(new char[] { '1', '0', '0' });
@@ -160,6 +168,14 @@ public class Computer {
 		}
 	}
 
+	public String getMemory(int theLocation) {
+		String value = "";
+		for (char c :mRegisters[theLocation].getBits()){
+			value += c;
+		}
+		return value ;
+	}
+
 	/**
 	 * This method will execute all the instructions starting at address 0 till HALT
 	 * instruction is encountered.
@@ -167,6 +183,8 @@ public class Computer {
 	public void execute() {
 		BitString opCodeStr;
 		int opCode;
+		BitString trapStr;
+		int trapCode;
 
 		while (true) {
 			// Fetch the instruction
@@ -177,25 +195,36 @@ public class Computer {
 			// to figure out the opcode
 			opCodeStr = mIR.substring(0, 4);
 			opCode = opCodeStr.getValue();
+			trapStr = mIR.substring(7, 8);
+			trapCode = trapStr.getValue();
+
+			// 1111 0000 0010 0101 ;HALT 1+4+32
+			// 1111 0000 0010 0001 ;OUT
+			// 1+2+4+8 = 15
 
 			// What instruction is this?
-			if (opCode == 9) { // NOT
-				executeNot();
-				return; // TODO - Remove this once you add other instructions.
+			if (opCode == 0) { // NOT
+				executeBR();
+				return;
 			} else if (opCode == 1) { // NOT
 				executeAdd();
-				return; // TODO - Remove this once you add other instructions.
-			} else if (opCode == -9) {
-				excuteHalt();
 				return;
 			} else if (opCode == 2) { // NOT
 				executeLD();
-				return; // TODO - Remove this once you add other instructions.
+				return;
 			} else if (opCode == 5) { // NOT
 				executeAnd();
-				return; // TODO - Remove this once you add other instructions.
+				return;
+			} else if (opCode == 9) { // NOT
+				executeNot();
+				return;
+			} else if (opCode == 15 && trapCode == 37) {
+				executeHalt();
+				return;
+			} else if (opCode == 15 && trapCode == 32) {
+				executeOUT();
+				return;
 			}
-			// TODO - Others
 		}
 	}
 
