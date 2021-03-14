@@ -1,4 +1,5 @@
 package simulator;
+//Keagan James Anderson, Abrham Takele, Yavuzalp Turkoglu
 
 /**
  * Simulator class contains the instructions to run an entire machine code

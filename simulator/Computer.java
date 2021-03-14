@@ -1,4 +1,5 @@
 package simulator;
+//Keagan James Anderson, Abrham Takele, Yavuzalp Turkoglu
 
 /**
  * Computer class comprises of memory, registers, cc and can execute the
@@ -161,12 +162,16 @@ public class Computer {
 		}
 	}
 
-	public String getMemory(int theLocation) {
+	public String getRegistry(int theLocation) {
 		String value = "";
 		for (char c : mRegisters[theLocation].getBits()) {
 			value += c;
 		}
 		return value;
+	}
+
+	public String getCC() {
+		return "" + mCC.getValue();
 	}
 
 	/**
@@ -181,6 +186,9 @@ public class Computer {
 		Boolean flag = true;
 
 		while (flag) {
+			if (mPC.getValue() == 50) {
+				return;
+			}
 			// Fetch the instruction
 			mIR = mMemory[mPC.getValue()];
 			mPC.addOne();
