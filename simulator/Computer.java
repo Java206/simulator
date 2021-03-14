@@ -123,13 +123,21 @@ public class Computer {
 
 	public void executeLD() {
 		BitString destBS = mIR.substring(4, 3);
-		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(11, 5).getValue2sComp()];
+		mRegisters[destBS.getValue()] = mMemory[mPC.getValue() + mIR.substring(7, 9).getValue2sComp() - 1];
 	}
 
 	public void executeBR() {
-		BitString destNZP = mIR.substring(4, 3);
+		BitString brN = mIR.substring(4, 1);
+		BitString brZ = mIR.substring(5, 1);
+		BitString brP = mIR.substring(6, 1);
+		BitString currentN = mCC.substring(0, 1);
+		BitString currentZ = mCC.substring(1, 1);
+		BitString currentP = mCC.substring(2, 1);
 		BitString offSet = mIR.substring(7, 9);
-		if (mCC.getValue() == destNZP.getValue()) {
+
+		if ((brN.getValue() == currentN.getValue() && brN.getValue() == 1)
+				|| (brZ.getValue() == currentZ.getValue() && brZ.getValue() == 1)
+				|| (brP.getValue() == currentP.getValue() && brP.getValue() == 1)) {
 			mPC.setValue(mPC.getValue() + offSet.getValue2sComp());
 		}
 	}
@@ -155,13 +163,12 @@ public class Computer {
 
 	public void executeHalt() {
 		System.out.println("Halting!");
-		System.exit(1);
 	}
 
 	public void setCC(int theValue) {
 		if (theValue < 0) {
 			mCC.setBits(new char[] { '1', '0', '0' });
-		} else if (theValue < 0) {
+		} else if (theValue == 0) {
 			mCC.setBits(new char[] { '0', '1', '0' });
 		} else {
 			mCC.setBits(new char[] { '0', '0', '1' });
@@ -204,7 +211,7 @@ public class Computer {
 			// 1+2+4+8 = 15
 
 			// What instruction is this?
-			if (opCode == 0) { // NOT
+			if (opCode == 0 && mIR.substring(4, 3).getValue() != 0) { // NOT
 				executeBR();
 			} else if (opCode == 1) { // NOT
 				executeAdd();
@@ -217,6 +224,7 @@ public class Computer {
 			} else if (opCode == 15 && trapCode == 37) {
 				executeHalt();
 				flag = false;
+				return;
 			} else if (opCode == 15 && trapCode == 32) {
 				executeOUT();
 			}

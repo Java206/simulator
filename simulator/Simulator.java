@@ -47,32 +47,15 @@ public class Simulator {
 		/* Once you are confident that single instructions work, you will */
 		/* want to replace this with code that loads all the instructions */
 		/* from the array shown above. */
-		System.out.println(comp.getMemory(6));
-
-		BitString andInstr = new BitString();
-		andInstr.setBits("0101101101100000".toCharArray());
-		comp.loadWord(0, andInstr);
-
-		BitString addInstr = new BitString();
-		addInstr.setBits("0001110110100010".toCharArray());
-		comp.loadWord(1, addInstr);
-
-		BitString notInstr = new BitString();
-		notInstr.setBits("1001100101111111".toCharArray());
-		comp.loadWord(2, notInstr);
-
-		BitString HaltInstr = new BitString();
-		HaltInstr.setBits("1111000000100101".toCharArray());
-		comp.loadWord(3, HaltInstr);
 
 		/* TODO - load the instructions in the "program" array */
 		/*
 		 */
-		// for (int i = 0; i < program.length; i++) {
-		// BitString instr = new BitString();
-		// instr.setBits(program[i].toCharArray());
-		// comp.loadWord(i, instr);
-		// }
+		for (int i = 0; i < program.length; i++) {
+			BitString instr = new BitString();
+			instr.setBits(program[i].toCharArray());
+			comp.loadWord(i, instr);
+		}
 
 		/* execute the program */
 		/* During execution, the only output to the screen should be */
